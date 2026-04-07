@@ -1,0 +1,19 @@
+# Java
+*.class
+*.jar
+out/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Datos grandes (opcional, si pesan mucho)
+# data/data_1000000.txt
+
+# IDE
+.vscode/
+.idea/
+*.iml
