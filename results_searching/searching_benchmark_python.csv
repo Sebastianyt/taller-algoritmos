@@ -1,0 +1,10 @@
+algorithm,language,n,timeSeconds,complexity
+Binary Search,Python,10000,0.099918900,O(log n)
+Jump Search,Python,10000,0.711144300,O(sqrt(n))
+Ternary Search,Python,10000,0.098983200,O(log n)
+Binary Search,Python,100000,0.129568600,O(log n)
+Jump Search,Python,100000,2.205844600,O(sqrt(n))
+Ternary Search,Python,100000,0.125232400,O(log n)
+Binary Search,Python,1000000,0.263038500,O(log n)
+Jump Search,Python,1000000,5.082275900,O(sqrt(n))
+Ternary Search,Python,1000000,0.237704000,O(log n)

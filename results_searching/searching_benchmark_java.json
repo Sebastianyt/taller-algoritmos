@@ -1,0 +1,11 @@
+[
+  {"algorithm":"Binary Search","language":"Java","n":10000,"timeSeconds":0.007845000,"complexity":"O(log n)"},
+  {"algorithm":"Ternary Search","language":"Java","n":10000,"timeSeconds":0.018533000,"complexity":"O(log n)"},
+  {"algorithm":"Jump Search","language":"Java","n":10000,"timeSeconds":0.021977800,"complexity":"O(sqrt(n))"},
+  {"algorithm":"Binary Search","language":"Java","n":100000,"timeSeconds":0.003476000,"complexity":"O(log n)"},
+  {"algorithm":"Ternary Search","language":"Java","n":100000,"timeSeconds":0.002202400,"complexity":"O(log n)"},
+  {"algorithm":"Jump Search","language":"Java","n":100000,"timeSeconds":0.023701800,"complexity":"O(sqrt(n))"},
+  {"algorithm":"Binary Search","language":"Java","n":1000000,"timeSeconds":0.020309100,"complexity":"O(log n)"},
+  {"algorithm":"Ternary Search","language":"Java","n":1000000,"timeSeconds":0.016501800,"complexity":"O(log n)"},
+  {"algorithm":"Jump Search","language":"Java","n":1000000,"timeSeconds":0.054135400,"complexity":"O(sqrt(n))"}
+]

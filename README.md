@@ -56,3 +56,40 @@ python scripts/plot_sorting_results.py
 - **Shaker Sort es \(O(n^2)\)**: con 100,000 y especialmente 1,000,000 puede tardar muchísimo.  
   En ambos benchmarks se imprime en consola cada cierto tiempo cuánto lleva ejecutándose.
 
+---
+
+## Punto 2 — Benchmark de busqueda (Python + Java)
+
+### Datos (carpeta aparte)
+
+- Se generan en `data_searching/`:
+  - `searching_10000.txt`, `searching_100000.txt`, `searching_1000000.txt` (arreglos ordenados)
+  - `queries_10000.txt`, `queries_100000.txt`, `queries_1000000.txt` (consultas)
+
+Generar datos (una sola vez):
+
+```bash
+python scripts/generate_searching_data.py
+```
+
+### Ejecutar benchmarks por separado
+
+Python (solo Python):
+
+```bash
+python searching/python/searching_runner.py
+```
+
+Java (solo Java):
+
+```bash
+javac searching/java/*.java
+java -cp searching/java SearchingRunner data_searching results_searching/searching_benchmark_java.json
+```
+
+### Graficas comparativas (igual que punto 1)
+
+```bash
+python scripts/plot_searching_results.py
+```
+

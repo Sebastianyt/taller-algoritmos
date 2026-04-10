@@ -1,0 +1,128 @@
+[
+  {
+    "algorithm": "Binary Search",
+    "language": "Java",
+    "n": 10000,
+    "timeSeconds": 0.007845,
+    "complexity": "O(log n)"
+  },
+  {
+    "algorithm": "Binary Search",
+    "language": "Python",
+    "n": 10000,
+    "timeSeconds": 0.09991890005767345,
+    "complexity": "O(log n)"
+  },
+  {
+    "algorithm": "Jump Search",
+    "language": "Java",
+    "n": 10000,
+    "timeSeconds": 0.0219778,
+    "complexity": "O(sqrt(n))"
+  },
+  {
+    "algorithm": "Jump Search",
+    "language": "Python",
+    "n": 10000,
+    "timeSeconds": 0.7111442999448627,
+    "complexity": "O(sqrt(n))"
+  },
+  {
+    "algorithm": "Ternary Search",
+    "language": "Java",
+    "n": 10000,
+    "timeSeconds": 0.018533,
+    "complexity": "O(log n)"
+  },
+  {
+    "algorithm": "Ternary Search",
+    "language": "Python",
+    "n": 10000,
+    "timeSeconds": 0.09898320003412664,
+    "complexity": "O(log n)"
+  },
+  {
+    "algorithm": "Binary Search",
+    "language": "Java",
+    "n": 100000,
+    "timeSeconds": 0.003476,
+    "complexity": "O(log n)"
+  },
+  {
+    "algorithm": "Binary Search",
+    "language": "Python",
+    "n": 100000,
+    "timeSeconds": 0.12956859986297786,
+    "complexity": "O(log n)"
+  },
+  {
+    "algorithm": "Jump Search",
+    "language": "Java",
+    "n": 100000,
+    "timeSeconds": 0.0237018,
+    "complexity": "O(sqrt(n))"
+  },
+  {
+    "algorithm": "Jump Search",
+    "language": "Python",
+    "n": 100000,
+    "timeSeconds": 2.205844599986449,
+    "complexity": "O(sqrt(n))"
+  },
+  {
+    "algorithm": "Ternary Search",
+    "language": "Java",
+    "n": 100000,
+    "timeSeconds": 0.0022024,
+    "complexity": "O(log n)"
+  },
+  {
+    "algorithm": "Ternary Search",
+    "language": "Python",
+    "n": 100000,
+    "timeSeconds": 0.1252323999069631,
+    "complexity": "O(log n)"
+  },
+  {
+    "algorithm": "Binary Search",
+    "language": "Java",
+    "n": 1000000,
+    "timeSeconds": 0.0203091,
+    "complexity": "O(log n)"
+  },
+  {
+    "algorithm": "Binary Search",
+    "language": "Python",
+    "n": 1000000,
+    "timeSeconds": 0.2630384999793023,
+    "complexity": "O(log n)"
+  },
+  {
+    "algorithm": "Jump Search",
+    "language": "Java",
+    "n": 1000000,
+    "timeSeconds": 0.0541354,
+    "complexity": "O(sqrt(n))"
+  },
+  {
+    "algorithm": "Jump Search",
+    "language": "Python",
+    "n": 1000000,
+    "timeSeconds": 5.082275900058448,
+    "complexity": "O(sqrt(n))"
+  },
+  {
+    "algorithm": "Ternary Search",
+    "language": "Java",
+    "n": 1000000,
+    "timeSeconds": 0.0165018,
+    "complexity": "O(log n)"
+  },
+  {
+    "algorithm": "Ternary Search",
+    "language": "Python",
+    "n": 1000000,
+    "timeSeconds": 0.23770400020293891,
+    "complexity": "O(log n)"
+  }
+]

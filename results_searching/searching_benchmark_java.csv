@@ -1,0 +1,10 @@
+algorithm,language,n,timeSeconds,complexity
+Binary Search,Java,10000,0.007845000,O(log n)
+Ternary Search,Java,10000,0.018533000,O(log n)
+Jump Search,Java,10000,0.021977800,O(sqrt(n))
+Binary Search,Java,100000,0.003476000,O(log n)
+Ternary Search,Java,100000,0.002202400,O(log n)
+Jump Search,Java,100000,0.023701800,O(sqrt(n))
+Binary Search,Java,1000000,0.020309100,O(log n)
+Ternary Search,Java,1000000,0.016501800,O(log n)
+Jump Search,Java,1000000,0.054135400,O(sqrt(n))
