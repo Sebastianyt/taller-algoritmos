@@ -1,62 +1,64 @@
-# Python3 program to implement 
-# dual pivot QuickSort
-def dualPivotQuickSort(arr, low, high):
-    
-    if low < high:
-        
-        # lp means left pivot and rp 
-        # means right pivot
-        lp, rp = partition(arr, low, high)
-        
-        dualPivotQuickSort(arr, low, lp - 1)
-        dualPivotQuickSort(arr, lp + 1, rp - 1)
-        dualPivotQuickSort(arr, rp + 1, high)
-        
-def partition(arr, low, high):
-    
+"""
+Dual-Pivot QuickSort – versión iterativa (stack explícito).
+Evita RecursionError con arreglos de 1 M elementos.
+Complejidad: O(n log n) promedio, O(log n) espacio de pila.
+"""
+
+
+def _partition(arr, low, high):
     if arr[low] > arr[high]:
         arr[low], arr[high] = arr[high], arr[low]
-        
-    # p is the left pivot, and q is the right pivot.
+    p = arr[low]    # pivote izquierdo
+    q = arr[high]   # pivote derecho
     j = k = low + 1
-    g, p, q = high - 1, arr[low], arr[high]
-    
+    g = high - 1
     while k <= g:
-        
-        # If elements are less than the left pivot
         if arr[k] < p:
             arr[k], arr[j] = arr[j], arr[k]
             j += 1
-            
-        # If elements are greater than or equal 
-        # to the right pivot
         elif arr[k] >= q:
             while arr[g] > q and k < g:
                 g -= 1
-                
             arr[k], arr[g] = arr[g], arr[k]
             g -= 1
-            
             if arr[k] < p:
                 arr[k], arr[j] = arr[j], arr[k]
                 j += 1
-                
         k += 1
-        
     j -= 1
     g += 1
-    
-    # Bring pivots to their appropriate positions.
     arr[low], arr[j] = arr[j], arr[low]
     arr[high], arr[g] = arr[g], arr[high]
-    
-    # Returning the indices of the pivots
     return j, g
 
+
+def dualPivotQuickSort(arr, low=None, high=None):
+    """
+    Interfaz compatible con el benchmark.
+    Si se llama sin low/high, ordena todo el arreglo.
+    """
+    n = len(arr)
+    if n < 2:
+        return
+    if low is None:
+        low = 0
+    if high is None:
+        high = n - 1
+
+    stack = [(low, high)]
+    while stack:
+        lo, hi = stack.pop()
+        if lo >= hi:
+            continue
+        lp, rp = _partition(arr, lo, hi)
+        # Empujar las tres partes al stack
+        stack.append((lo, lp - 1))
+        stack.append((lp + 1, rp - 1))
+        stack.append((rp + 1, hi))
+
+
+# Driver
 if __name__ == "__main__":
     arr = [24, 8, 42, 75, 29, 77, 38, 57]
-    dualPivotQuickSort(arr, 0, len(arr) - 1)
-    print("Sorted array: ", end="")
-    for i in arr:
-        print(i, end=" ")
-    print()
+    dualPivotQuickSort(arr)
+    print("Sorted:", arr)

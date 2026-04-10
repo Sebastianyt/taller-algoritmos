@@ -1,51 +1,38 @@
-# To heapify a subtree rooted with node i
-def heapify(arr, n, i):
+"""
+Heap Sort – heapify iterativo para evitar RecursionError con 1 M elementos.
+Complejidad: O(n log n) tiempo, O(1) espacio extra.
+"""
 
-    # Initialize largest as root
-    largest = i
 
-    # left index = 2*i + 1
-    l = 2 * i + 1
-
-    # right index = 2*i + 2
-    r = 2 * i + 2
-
-    # If left child is larger than root
-    if l < n and arr[l] > arr[largest]:
-        largest = l
-
-    # If right child is larger than largest so far
-    if r < n and arr[r] > arr[largest]:
-        largest = r
-
-    # If largest is not root
-    if largest != i:
+def _heapify_iterative(arr, n, i):
+    """Versión iterativa de heapify: sin riesgo de stack overflow."""
+    while True:
+        largest = i
+        l = 2 * i + 1
+        r = 2 * i + 2
+        if l < n and arr[l] > arr[largest]:
+            largest = l
+        if r < n and arr[r] > arr[largest]:
+            largest = r
+        if largest == i:
+            break
         arr[i], arr[largest] = arr[largest], arr[i]
+        i = largest
 
-        # Recursively heapify the affected sub-tree
-        heapify(arr, n, largest)
 
-# Main function to do heap sort
 def heapSort(arr):
     n = len(arr)
-
-    # Build heap (rearrange vector)
+    # Build max-heap
     for i in range(n // 2 - 1, -1, -1):
-        heapify(arr, n, i)
-
-    # One by one extract an element from heap
+        _heapify_iterative(arr, n, i)
+    # Extract elements one by one
     for i in range(n - 1, 0, -1):
-
-        # Move current root to end
         arr[0], arr[i] = arr[i], arr[0]
+        _heapify_iterative(arr, i, 0)
 
-        # Call max heapify on the reduced heap
-        heapify(arr, i, 0)
 
+# Driver
 if __name__ == "__main__":
     arr = [9, 4, 3, 8, 10, 2, 5]
-
     heapSort(arr)
-
-    for i in range(len(arr)):
-        print(arr[i], end=" ")
+    print("Sorted:", arr)

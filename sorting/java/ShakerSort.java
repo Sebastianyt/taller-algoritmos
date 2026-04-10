@@ -1,13 +1,38 @@
 // Java program for implementation of Cocktail Sort
 public class ShakerSort {
-    public void cocktailSort(int a[])
-    {
+    public static class ShakerSortTimeout extends RuntimeException {
+        public ShakerSortTimeout(String message) {
+            super(message);
+        }
+    }
+
+    public void cocktailSort(int[] a) {
+        cocktailSort(a, 0L);
+    }
+
+    /**
+     * @param timeoutMillis 0 para sin timeout; >0 para limite de tiempo.
+     */
+    public void cocktailSort(int[] a, long timeoutMillis) {
+        final long startNs = System.nanoTime();
+        final long timeoutNs = timeoutMillis > 0 ? timeoutMillis * 1_000_000L : 0L;
+
+        Runnable checkTimeout = () -> {
+            if (timeoutNs > 0) {
+                long elapsed = System.nanoTime() - startNs;
+                if (elapsed >= timeoutNs) {
+                    throw new ShakerSortTimeout("Shaker Sort timeout after " + timeoutMillis + " ms");
+                }
+            }
+        };
+
         boolean swapped = true;
         int start = 0;
         int end = a.length;
 
         while (swapped == true) 
         {
+            checkTimeout.run();
             // reset the swapped flag on entering the
             // loop, because it might be true from a
             // previous iteration.
@@ -39,6 +64,7 @@ public class ShakerSort {
 
             // from top to bottom, doing the
             // same comparison as in the previous stage
+            checkTimeout.run();
             for (int i = end - 1; i >= start; i--) 
             {
                 if (a[i] > a[i + 1]) 
@@ -57,22 +83,4 @@ public class ShakerSort {
         }
     }
 
-    /* Prints the array */
-    void printArray(int a[])
-    {
-        int n = a.length;
-        for (int i = 0; i < n; i++)
-            System.out.print(a[i] + " ");
-        System.out.println();
-    }
-
-    // Driver code
-    public static void main(String[] args)
-    {
-        ShakerSort ob = new ShakerSort();
-        int a[] = { 5, 1, 4, 2, 8, 0, 2 };
-        ob.cocktailSort(a);
-        System.out.println("Sorted array");
-        ob.printArray(a);
-    }
 }

@@ -57,13 +57,4 @@ public class DualPivotQuickSort {
         dualPivotQuickSort(arr, 0, arr.length - 1);
     }
 
-    public static void main(String[] args) {
-        int[] arr = { 24, 8, 42, 75, 29, 77, 38, 57 };
-        sort(arr);
-        System.out.print("Sorted array: ");
-        for (int v : arr) {
-            System.out.print(v + " ");
-        }
-        System.out.println();
-    }
 }

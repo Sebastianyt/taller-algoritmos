@@ -1,0 +1,17 @@
+[
+  {"algorithm":"Shaker Sort","language":"Java","n":10000,"timeSeconds":0.093407900,"complexity":"O(n^2)","timedOut":false},
+  {"algorithm":"Dual-Pivot QuickSort","language":"Java","n":10000,"timeSeconds":0.005910800,"complexity":"O(n log n) promedio","timedOut":false},
+  {"algorithm":"Heap Sort","language":"Java","n":10000,"timeSeconds":0.011367600,"complexity":"O(n log n)","timedOut":false},
+  {"algorithm":"Merge Sort","language":"Java","n":10000,"timeSeconds":0.003021300,"complexity":"O(n log n)","timedOut":false},
+  {"algorithm":"Radix Sort","language":"Java","n":10000,"timeSeconds":0.006807300,"complexity":"O(d * n), d=8","timedOut":false},
+  {"algorithm":"Shaker Sort","language":"Java","n":100000,"timeSeconds":11.974452900,"complexity":"O(n^2)","timedOut":false},
+  {"algorithm":"Dual-Pivot QuickSort","language":"Java","n":100000,"timeSeconds":0.014509500,"complexity":"O(n log n) promedio","timedOut":false},
+  {"algorithm":"Heap Sort","language":"Java","n":100000,"timeSeconds":0.014414500,"complexity":"O(n log n)","timedOut":false},
+  {"algorithm":"Merge Sort","language":"Java","n":100000,"timeSeconds":0.013271400,"complexity":"O(n log n)","timedOut":false},
+  {"algorithm":"Radix Sort","language":"Java","n":100000,"timeSeconds":0.018161600,"complexity":"O(d * n), d=8","timedOut":false},
+  {"algorithm":"Shaker Sort","language":"Java","n":1000000,"timeSeconds":-1.000000000,"complexity":"O(n^2)","timedOut":true},
+  {"algorithm":"Dual-Pivot QuickSort","language":"Java","n":1000000,"timeSeconds":0.092879000,"complexity":"O(n log n) promedio","timedOut":false},
+  {"algorithm":"Heap Sort","language":"Java","n":1000000,"timeSeconds":0.220991800,"complexity":"O(n log n)","timedOut":false},
+  {"algorithm":"Merge Sort","language":"Java","n":1000000,"timeSeconds":0.357481900,"complexity":"O(n log n)","timedOut":false},
+  {"algorithm":"Radix Sort","language":"Java","n":1000000,"timeSeconds":0.168793600,"complexity":"O(d * n), d=8","timedOut":false}
+]

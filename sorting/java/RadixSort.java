@@ -43,12 +43,4 @@ public class RadixSort {
         radixsort(arr, arr.length);
     }
 
-    public static void main(String[] args) {
-        int[] arr = { 170, 45, 75, 90, 802, 24, 2, 66 };
-        sort(arr);
-        for (int v : arr) {
-            System.out.print(v + " ");
-        }
-        System.out.println();
-    }
 }

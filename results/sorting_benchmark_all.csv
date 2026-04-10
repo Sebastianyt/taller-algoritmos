@@ -1,0 +1,31 @@
+algorithm,language,n,timeSeconds,complexity
+Dual-Pivot QuickSort,Java,10000,0.005910800,O(n log n) promedio
+Dual-Pivot QuickSort,Python,10000,0.013479500,O(n log n) promedio
+Heap Sort,Java,10000,0.011367600,O(n log n)
+Heap Sort,Python,10000,0.037130700,O(n log n)
+Merge Sort,Java,10000,0.003021300,O(n log n)
+Merge Sort,Python,10000,0.029997000,O(n log n)
+Radix Sort,Java,10000,0.006807300,"O(d * n), d=8"
+Radix Sort,Python,10000,0.033702200,"O(d * n), d=8"
+Shaker Sort,Java,10000,0.093407900,O(n^2)
+Shaker Sort,Python,10000,4.447680100,O(n^2)
+Dual-Pivot QuickSort,Java,100000,0.014509500,O(n log n) promedio
+Dual-Pivot QuickSort,Python,100000,0.205606200,O(n log n) promedio
+Heap Sort,Java,100000,0.014414500,O(n log n)
+Heap Sort,Python,100000,0.622158700,O(n log n)
+Merge Sort,Java,100000,0.013271400,O(n log n)
+Merge Sort,Python,100000,0.413219700,O(n log n)
+Radix Sort,Java,100000,0.018161600,"O(d * n), d=8"
+Radix Sort,Python,100000,0.467284000,"O(d * n), d=8"
+Shaker Sort,Java,100000,11.974452900,O(n^2)
+Shaker Sort,Python,100000,-1.000000000,O(n^2)
+Dual-Pivot QuickSort,Java,1000000,0.092879000,O(n log n) promedio
+Dual-Pivot QuickSort,Python,1000000,3.190110200,O(n log n) promedio
+Heap Sort,Java,1000000,0.220991800,O(n log n)
+Heap Sort,Python,1000000,7.846550300,O(n log n)
+Merge Sort,Java,1000000,0.357481900,O(n log n)
+Merge Sort,Python,1000000,5.827243700,O(n log n)
+Radix Sort,Java,1000000,0.168793600,"O(d * n), d=8"
+Radix Sort,Python,1000000,5.862702400,"O(d * n), d=8"
+Shaker Sort,Java,1000000,-1.000000000,O(n^2)
+Shaker Sort,Python,1000000,-1.000000000,O(n^2)

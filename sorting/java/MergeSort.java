@@ -52,12 +52,4 @@ public class MergeSort {
         mergeSort(arr, 0, arr.length - 1);
     }
 
-    public static void main(String[] args) {
-        int[] arr = { 38, 27, 43, 10 };
-        sort(arr);
-        for (int v : arr) {
-            System.out.print(v + " ");
-        }
-        System.out.println();
-    }
 }

@@ -1,0 +1,16 @@
+algorithm,language,n,timeSeconds,complexity,timedOut
+Shaker Sort,Java,10000,0.093407900,O(n^2),false
+Dual-Pivot QuickSort,Java,10000,0.005910800,O(n log n) promedio,false
+Heap Sort,Java,10000,0.011367600,O(n log n),false
+Merge Sort,Java,10000,0.003021300,O(n log n),false
+Radix Sort,Java,10000,0.006807300,"O(d * n), d=8",false
+Shaker Sort,Java,100000,11.974452900,O(n^2),false
+Dual-Pivot QuickSort,Java,100000,0.014509500,O(n log n) promedio,false
+Heap Sort,Java,100000,0.014414500,O(n log n),false
+Merge Sort,Java,100000,0.013271400,O(n log n),false
+Radix Sort,Java,100000,0.018161600,"O(d * n), d=8",false
+Shaker Sort,Java,1000000,-1.000000000,O(n^2),true
+Dual-Pivot QuickSort,Java,1000000,0.092879000,O(n log n) promedio,false
+Heap Sort,Java,1000000,0.220991800,O(n log n),false
+Merge Sort,Java,1000000,0.357481900,O(n log n),false
+Radix Sort,Java,1000000,0.168793600,"O(d * n), d=8",false

@@ -1,12 +1,29 @@
 # Python program for implementation of Cocktail Sort
+from __future__ import annotations
+
+import time
 
 
-def cocktailSort(a):
+class ShakerSortTimeout(TimeoutError):
+    pass
+
+
+def cocktailSort(a, timeout_seconds: float | None = None):
     n = len(a)
     swapped = True
     start = 0
-    end = n-1
-    while (swapped == True):
+    end = n - 1
+
+    deadline = None
+    if timeout_seconds is not None:
+        deadline = time.perf_counter() + float(timeout_seconds)
+
+    def _check_timeout():
+        if deadline is not None and time.perf_counter() >= deadline:
+            raise ShakerSortTimeout(f"Shaker Sort timeout after {timeout_seconds} seconds")
+
+    while swapped is True:
+        _check_timeout()
 
         # reset the swapped flag on entering the loop,
         # because it might be true from a previous
@@ -16,12 +33,12 @@ def cocktailSort(a):
         # loop from left to right same as the bubble
         # sort
         for i in range(start, end):
-            if (a[i] > a[i + 1]):
+            if a[i] > a[i + 1]:
                 a[i], a[i + 1] = a[i + 1], a[i]
                 swapped = True
 
         # if nothing moved, then array is sorted.
-        if (swapped == False):
+        if swapped is False:
             break
 
         # otherwise, reset the swapped flag so that it
@@ -30,12 +47,13 @@ def cocktailSort(a):
 
         # move the end point back by one, because
         # item at the end is in its rightful spot
-        end = end-1
+        end = end - 1
 
         # from right to left, doing the same
         # comparison as in the previous stage
-        for i in range(end-1, start-1, -1):
-            if (a[i] > a[i + 1]):
+        _check_timeout()
+        for i in range(end - 1, start - 1, -1):
+            if a[i] > a[i + 1]:
                 a[i], a[i + 1] = a[i + 1], a[i]
                 swapped = True
 

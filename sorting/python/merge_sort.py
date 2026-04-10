@@ -1,59 +1,52 @@
-def merge(arr, left, mid, right):
-    n1 = mid - left + 1
-    n2 = right - mid
+"""
+Merge Sort – versión iterativa (bottom-up) para Python.
+Evita RecursionError en arreglos grandes (100 K – 1 M elementos).
+Complejidad: O(n log n) tiempo, O(n) espacio.
+"""
 
-    # Create temp arrays
-    L = [0] * n1
-    R = [0] * n2
 
-    # Copy data to temp arrays L[] and R[]
-    for i in range(n1):
-        L[i] = arr[left + i]
-    for j in range(n2):
-        R[j] = arr[mid + 1 + j]
-        
-    i = 0  
-    j = 0  
-    k = left  
+def mergeSort(arr, left=None, right=None):
+    """Interfaz compatible con el benchmark (ignora left/right, ordena in-place)."""
+    n = len(arr)
+    if n < 2:
+        return
 
-    # Merge the temp arrays back
-    # into arr[left..right]
-    while i < n1 and j < n2:
-        if L[i] <= R[j]:
-            arr[k] = L[i]
+    # Bottom-up merge sort
+    width = 1
+    while width < n:
+        for lo in range(0, n, 2 * width):
+            mid = min(lo + width, n)
+            hi = min(lo + 2 * width, n)
+            if mid < hi:
+                _merge(arr, lo, mid, hi)
+        width *= 2
+
+
+def _merge(arr, lo, mid, hi):
+    left = arr[lo:mid]
+    right = arr[mid:hi]
+    i = j = 0
+    k = lo
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            arr[k] = left[i]
             i += 1
         else:
-            arr[k] = R[j]
+            arr[k] = right[j]
             j += 1
         k += 1
-
-    # Copy the remaining elements of L[],
-    # if there are any
-    while i < n1:
-        arr[k] = L[i]
+    while i < len(left):
+        arr[k] = left[i]
         i += 1
         k += 1
-
-    # Copy the remaining elements of R[], 
-    # if there are any
-    while j < n2:
-        arr[k] = R[j]
+    while j < len(right):
+        arr[k] = right[j]
         j += 1
         k += 1
 
-def mergeSort(arr, left, right):
-    if left < right:
-        mid = (left + right) // 2
 
-        mergeSort(arr, left, mid)
-        mergeSort(arr, mid + 1, right)
-        merge(arr, left, mid, right)
-
-# Driver code
+# Driver
 if __name__ == "__main__":
-    arr = [38, 27, 43, 10]
-   
-    mergeSort(arr, 0, len(arr) - 1)
-    for i in arr:
-        print(i, end=" ")
-    print()
+    arr = [38, 27, 43, 10, 3, 9, 82, 10]
+    mergeSort(arr)
+    print("Sorted:", arr)

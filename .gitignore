@@ -1,3 +1,7 @@
+*.class
+__pycache__/
+.pytest_cache/
+results/*.png
 # Java
 *.class
 *.jar

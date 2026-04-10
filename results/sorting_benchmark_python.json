@@ -1,0 +1,122 @@
+[
+  {
+    "algorithm": "Dual-Pivot QuickSort",
+    "language": "Python",
+    "n": 10000,
+    "timeSeconds": 0.013479500077664852,
+    "complexity": "O(n log n) promedio",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Heap Sort",
+    "language": "Python",
+    "n": 10000,
+    "timeSeconds": 0.03713069995865226,
+    "complexity": "O(n log n)",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Merge Sort",
+    "language": "Python",
+    "n": 10000,
+    "timeSeconds": 0.029997000005096197,
+    "complexity": "O(n log n)",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Radix Sort",
+    "language": "Python",
+    "n": 10000,
+    "timeSeconds": 0.03370220004580915,
+    "complexity": "O(d * n), d=8",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Shaker Sort",
+    "language": "Python",
+    "n": 10000,
+    "timeSeconds": 4.447680100100115,
+    "complexity": "O(n^2)",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Dual-Pivot QuickSort",
+    "language": "Python",
+    "n": 100000,
+    "timeSeconds": 0.2056062000337988,
+    "complexity": "O(n log n) promedio",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Heap Sort",
+    "language": "Python",
+    "n": 100000,
+    "timeSeconds": 0.6221586999017745,
+    "complexity": "O(n log n)",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Merge Sort",
+    "language": "Python",
+    "n": 100000,
+    "timeSeconds": 0.41321969986893237,
+    "complexity": "O(n log n)",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Radix Sort",
+    "language": "Python",
+    "n": 100000,
+    "timeSeconds": 0.4672840000130236,
+    "complexity": "O(d * n), d=8",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Shaker Sort",
+    "language": "Python",
+    "n": 100000,
+    "timeSeconds": -1.0,
+    "complexity": "O(n^2)",
+    "timedOut": true
+  },
+  {
+    "algorithm": "Dual-Pivot QuickSort",
+    "language": "Python",
+    "n": 1000000,
+    "timeSeconds": 3.1901101998519152,
+    "complexity": "O(n log n) promedio",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Heap Sort",
+    "language": "Python",
+    "n": 1000000,
+    "timeSeconds": 7.846550300018862,
+    "complexity": "O(n log n)",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Merge Sort",
+    "language": "Python",
+    "n": 1000000,
+    "timeSeconds": 5.82724369992502,
+    "complexity": "O(n log n)",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Radix Sort",
+    "language": "Python",
+    "n": 1000000,
+    "timeSeconds": 5.862702399957925,
+    "complexity": "O(d * n), d=8",
+    "timedOut": false
+  },
+  {
+    "algorithm": "Shaker Sort",
+    "language": "Python",
+    "n": 1000000,
+    "timeSeconds": -1.0,
+    "complexity": "O(n^2)",
+    "timedOut": true
+  }
+]

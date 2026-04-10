@@ -1,6 +1,13 @@
 """
-Punto 1: carga datos desde archivo (generados una sola vez), mide solo el sort en Python,
-invoca el benchmark Java para los mismos datos, exporta CSV/JSON y genera gráfico de barras.
+Benchmark de algoritmos de ordenamiento — SOLO PYTHON.
+Lee datos desde archivos pre-generados (no los regenera).
+Mide ÚNICAMENTE el tiempo de sort, sin I/O.
+
+Shaker Sort se ejecuta sin timeout, sin importar cuánto tarde.
+Se muestra en consola cuánto lleva cada ejecución larga (cada 5 s).
+
+Uso:
+    python sorting/python/benchmark_sorting.py
 """
 from __future__ import annotations
 
@@ -9,8 +16,10 @@ import json
 import subprocess
 import sys
 import time
+import threading
 from pathlib import Path
 
+# ── Rutas ──────────────────────────────────────────────────────────────────────
 _SORT_DIR = Path(__file__).resolve().parent
 if str(_SORT_DIR) not in sys.path:
     sys.path.insert(0, str(_SORT_DIR))
@@ -19,202 +28,220 @@ from dual_pivot_quicksort import dualPivotQuickSort
 from heap_sort import heapSort
 from merge_sort import mergeSort
 from radix_sort import radixSort
-from shaker_sort import cocktailSort
+from shaker_sort import cocktailSort, ShakerSortTimeout
 
 ROOT = Path(__file__).resolve().parents[2]
-JAVA_DIR = ROOT / "sorting" / "java"
-DATA_PATH = ROOT / "data" / "sorting_1000000.txt"
+DATA_DIR = ROOT / "data"
 RESULTS_DIR = ROOT / "results"
 GEN_SCRIPT = ROOT / "scripts" / "generate_sorting_data.py"
 
-SIZES = (10_000, 100_000, 1_000_000)
+# Tamaños y sus archivos correspondientes
+SIZES: list[tuple[int, str]] = [
+    (10_000,    "sorting_10000.txt"),
+    (100_000,   "sorting_100000.txt"),
+    (1_000_000, "sorting_1000000.txt"),
+]
+
+SHAKER_TIMEOUT_SECONDS = 10 * 60  # 10 minutos
 
 ALGORITHMS: list[tuple[str, str, object]] = [
-    ("Shaker Sort", "O(n^2)", cocktailSort),
-    ("Dual-Pivot QuickSort", "O(n log n) promedio", lambda a: dualPivotQuickSort(a, 0, len(a) - 1)),
-    ("Heap Sort", "O(n log n)", heapSort),
-    ("Merge Sort", "O(n log n)", lambda a: mergeSort(a, 0, len(a) - 1)),
-    ("Radix Sort", "O(d * n), d=8", radixSort),
+    ("Shaker Sort",          "O(n^2)",              lambda a: cocktailSort(a, timeout_seconds=SHAKER_TIMEOUT_SECONDS)),
+    ("Dual-Pivot QuickSort", "O(n log n) promedio", lambda a: dualPivotQuickSort(a)),
+    ("Heap Sort",            "O(n log n)",           heapSort),
+    ("Merge Sort",           "O(n log n)",           lambda a: mergeSort(a)),
+    ("Radix Sort",           "O(d * n), d=8",        radixSort),
 ]
 
 
+# ── Generación / carga de datos ────────────────────────────────────────────────
 def ensure_data() -> None:
+    """Genera los archivos de datos si no existen."""
     subprocess.run([sys.executable, str(GEN_SCRIPT)], check=True, cwd=str(ROOT))
 
 
-def load_ints(path: Path) -> list[int]:
+def load_data(path: Path) -> list[int]:
+    """Lee enteros desde archivo de texto plano."""
+    print(f"    Leyendo {path.name} ...", end=" ", flush=True)
+    t0 = time.perf_counter()
     with path.open("r", encoding="ascii") as f:
-        return [int(line) for line in f if line.strip()]
+        data = [int(line) for line in f if line.strip()]
+    elapsed = time.perf_counter() - t0
+    print(f"{elapsed:.1f}s - {len(data):,} elementos")
+    return data
 
 
-def run_python_benchmarks(full: list[int]) -> list[dict]:
+# ── Ejecución con progreso (sin timeout) ──────────────────────────────────────
+def run_with_progress(fn, arr: list, name: str) -> float:
+    """
+    Ejecuta fn(arr) en un hilo secundario mientras el hilo principal
+    imprime cada 5 segundos cuánto tiempo lleva.
+    Sin timeout — se espera hasta que termine.
+    Retorna los segundos de sort puro.
+    """
+    result: list = [None, None]   # [elapsed_seconds, exception]
+
+    def worker():
+        t0 = time.perf_counter()
+        try:
+            fn(arr)
+        except Exception as exc:
+            result[1] = exc
+        result[0] = time.perf_counter() - t0
+
+    thread = threading.Thread(target=worker, daemon=True)
+    thread.start()
+
+    tick = 0
+    while thread.is_alive():
+        thread.join(timeout=5.0)
+        if thread.is_alive():
+            tick += 5
+            print(f"      [RUNNING] {name} sigue corriendo... {tick}s transcurridos", flush=True)
+
+    if result[1] is not None:
+        raise result[1]
+
+    return result[0]
+
+
+# ── Benchmark Python ──────────────────────────────────────────────────────────
+def run_python_benchmarks() -> list[dict]:
+    """Ejecuta todos los algoritmos sobre cada tamaño de arreglo."""
     rows: list[dict] = []
-    for n in SIZES:
+
+    for n, filename in SIZES:
+        data_path = DATA_DIR / filename
+        print(f"\n  -- n = {n:,} --")
+        data = load_data(data_path)
+
         for name, complexity, sort_fn in ALGORITHMS:
-            arr = full[:n].copy()
-            t0 = time.perf_counter()
-            sort_fn(arr)
-            secs = time.perf_counter() - t0
-            rows.append(
-                {
-                    "algorithm": name,
-                    "language": "Python",
-                    "n": n,
-                    "timeSeconds": secs,
-                    "complexity": complexity,
-                }
-            )
+            arr = data[:n].copy()
+            print(f"    [{name}] ejecutando ...", flush=True)
+
+            timed_out = False
+            secs = -1.0
+            try:
+                secs = run_with_progress(sort_fn, arr, name)
+                label = f"{secs*1000:.1f} ms" if secs < 1 else f"{secs:.3f} s"
+                print(f"    [{name}] OK {label}")
+            except ShakerSortTimeout:
+                timed_out = True
+                print(f"    [{name}] TIMEOUT ({SHAKER_TIMEOUT_SECONDS}s)")
+
+            rows.append({
+                "algorithm":   name,
+                "language":    "Python",
+                "n":           n,
+                "timeSeconds": secs,
+                "complexity":  complexity,
+                "timedOut":    timed_out,
+            })
+
     return rows
 
 
-def compile_and_run_java() -> list[dict]:
-    java_files = sorted(JAVA_DIR.glob("*.java"))
-    if not java_files:
-        raise FileNotFoundError(f"No hay .java en {JAVA_DIR}")
-
-    compile_cmd = ["javac", "-encoding", "UTF-8"] + [str(p) for p in java_files]
-    r = subprocess.run(compile_cmd, cwd=str(JAVA_DIR), capture_output=True, text=True)
-    if r.returncode != 0:
-        raise RuntimeError(
-            "javac falló (¿JDK instalado y en PATH?).\n"
-            f"{r.stderr or r.stdout}"
-        )
-
-    partial = RESULTS_DIR / "sorting_java_partial.json"
-    run_cmd = [
-        "java",
-        "-cp",
-        str(JAVA_DIR),
-        "SortingBenchmark",
-        str(DATA_PATH),
-        str(partial),
-    ]
-    r2 = subprocess.run(run_cmd, capture_output=True, text=True)
-    if r2.returncode != 0:
-        raise RuntimeError(f"Java benchmark falló:\n{r2.stderr or r2.stdout}")
-
-    with partial.open("r", encoding="utf-8") as f:
-        return json.load(f)
-
-
+# ── Exportación ───────────────────────────────────────────────────────────────
 def write_csv(path: Path, rows: list[dict]) -> None:
-    fieldnames = ["algorithm", "language", "n", "timeSeconds", "complexity"]
+    fieldnames = ["algorithm", "language", "n", "timeSeconds", "complexity", "timedOut"]
     with path.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)
         w.writeheader()
         for row in rows:
-            w.writerow(
-                {
-                    "algorithm": row["algorithm"],
-                    "language": row["language"],
-                    "n": row["n"],
-                    "timeSeconds": f"{row['timeSeconds']:.9f}",
-                    "complexity": row["complexity"],
-                }
-            )
+            w.writerow({
+                "algorithm":   row["algorithm"],
+                "language":    row["language"],
+                "n":           row["n"],
+                "timeSeconds": f"{row['timeSeconds']:.9f}",
+                "complexity":  row["complexity"],
+                "timedOut":    bool(row.get("timedOut", False)),
+            })
 
 
 def write_json(path: Path, rows: list[dict]) -> None:
-    out = []
-    for row in rows:
-        out.append(
-            {
-                "algorithm": row["algorithm"],
-                "language": row["language"],
-                "n": row["n"],
-                "timeSeconds": row["timeSeconds"],
-                "complexity": row["complexity"],
-            }
-        )
     with path.open("w", encoding="utf-8") as f:
-        json.dump(out, f, indent=2, ensure_ascii=False)
+        json.dump(rows, f, indent=2, ensure_ascii=False)
 
 
+# ── Gráfico ───────────────────────────────────────────────────────────────────
 def plot_bars(rows: list[dict], out_png: Path) -> None:
     try:
         import matplotlib.pyplot as plt
         import numpy as np
     except ImportError as e:
-        print("matplotlib no instalado; se omite el gráfico.", e)
+        print(f"  matplotlib no instalado — se omite el gráfico. ({e})")
         return
 
     order = [a[0] for a in ALGORITHMS]
-    fig, axes = plt.subplots(1, 3, figsize=(14, 5), sharey=False)
-    fig.suptitle("Punto 1 — Ordenamiento: Java vs Python (tiempo de sort, sin I/O)")
+    fig, axes = plt.subplots(1, 3, figsize=(20, 6), sharey=False)
+    fig.suptitle(
+        "Benchmark Algoritmos de Ordenamiento — Python\n"
+        "(tiempo de sort puro, sin I/O)",
+        fontsize=13, fontweight="bold",
+    )
 
-    for ax, n in zip(axes, SIZES):
-        java_t = {r["algorithm"]: r["timeSeconds"] for r in rows if r["n"] == n and r["language"] == "Java"}
-        py_t = {r["algorithm"]: r["timeSeconds"] for r in rows if r["n"] == n and r["language"] == "Python"}
+    color = "#DD8452"
+
+    for ax, (n, _) in zip(axes, SIZES):
+        py_map = {r["algorithm"]: r for r in rows if r["n"] == n and r["language"] == "Python"}
         x = np.arange(len(order))
-        w = 0.35
-        jvals = [java_t[k] for k in order]
-        pvals = [py_t[k] for k in order]
-        b1 = ax.bar(x - w / 2, jvals, w, label="Java")
-        b2 = ax.bar(x + w / 2, pvals, w, label="Python")
-        ax.set_title(f"n = {n:,}")
+        vals = [py_map[k]["timeSeconds"] if k in py_map else 0 for k in order]
+
+        bars = ax.bar(x, vals, 0.55, label="Python", color=color, edgecolor="white", linewidth=0.5)
+        ax.set_title(f"n = {n:,}", fontsize=11, fontweight="bold")
         ax.set_xticks(x)
-        ax.set_xticklabels(order, rotation=25, ha="right")
+        ax.set_xticklabels(order, rotation=28, ha="right", fontsize=8)
         ax.set_ylabel("Tiempo (s)")
         ax.legend()
 
-        def label_bars(bars):
-            for b in bars:
-                h = b.get_height()
-                if h <= 0:
-                    continue
-                if h < 1e-3:
-                    t = f"{h * 1000:.2f} ms"
-                elif h < 1:
-                    t = f"{h:.4f} s"
-                else:
-                    t = f"{h:.3f} s"
-                ax.annotate(
-                    t,
-                    xy=(b.get_x() + b.get_width() / 2, h),
-                    xytext=(0, 2),
-                    textcoords="offset points",
-                    ha="center",
-                    va="bottom",
-                    fontsize=7,
-                )
-
-        label_bars(b1)
-        label_bars(b2)
+        for bar, v in zip(bars, vals):
+            if v <= 0:
+                continue
+            h = bar.get_height()
+            cx = bar.get_x() + bar.get_width() / 2
+            label = f"{v*1000:.2f} ms" if v < 1 else f"{v:.3f} s"
+            ax.annotate(
+                label,
+                xy=(cx, h), xytext=(0, 3), textcoords="offset points",
+                ha="center", va="bottom", fontsize=7,
+            )
 
     plt.tight_layout()
-    plt.savefig(out_png, dpi=150)
+    plt.savefig(out_png, dpi=150, bbox_inches="tight")
     plt.close()
-    print(f"Gráfico guardado en {out_png}")
+    print(f"\n  Gráfico guardado en {out_png}")
 
 
+# ── Main ──────────────────────────────────────────────────────────────────────
 def main() -> None:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    print("=" * 60)
+    print("  BENCHMARK DE ORDENAMIENTO - PYTHON")
+    print("=" * 60)
+
+    print("\n[1] Verificando/generando archivos de datos ...")
     ensure_data()
-    if not DATA_PATH.exists():
-        raise FileNotFoundError(DATA_PATH)
 
-    print("Cargando datos (no incluido en la medición del sort)...")
-    full = load_ints(DATA_PATH)
-    if len(full) < 1_000_000:
-        raise ValueError(f"Se esperan 1_000_000 enteros; hay {len(full)}")
+    print("\n[2] Ejecutando benchmarks Python ...")
+    py_rows = run_python_benchmarks()
 
-    print("Ejecutando benchmarks en Python...")
-    py_rows = run_python_benchmarks(full)
+    py_rows.sort(key=lambda r: (r["n"], r["algorithm"]))
 
-    print("Compilando y ejecutando benchmarks en Java...")
-    java_rows = compile_and_run_java()
+    csv_path  = RESULTS_DIR / "sorting_benchmark_python.csv"
+    json_path = RESULTS_DIR / "sorting_benchmark_python.json"
+    png_path  = RESULTS_DIR / "sorting_benchmark_python.png"
 
-    combined = py_rows + java_rows
-    combined.sort(key=lambda r: (r["n"], r["algorithm"], r["language"]))
+    write_csv(csv_path, py_rows)
+    write_json(json_path, py_rows)
 
-    csv_path = RESULTS_DIR / "sorting_benchmark.csv"
-    json_path = RESULTS_DIR / "sorting_benchmark.json"
-    write_csv(csv_path, combined)
-    write_json(json_path, combined)
-    print(f"CSV:  {csv_path}")
-    print(f"JSON: {json_path}")
+    print(f"\n[3] Resultados exportados:")
+    print(f"    CSV  → {csv_path}")
+    print(f"    JSON → {json_path}")
 
-    plot_bars(combined, RESULTS_DIR / "sorting_benchmark.png")
+    plot_bars(py_rows, png_path)
+
+    print("\n" + "=" * 60)
+    print("  BENCHMARK PYTHON COMPLETADO")
+    print("=" * 60)
 
 
 if __name__ == "__main__":

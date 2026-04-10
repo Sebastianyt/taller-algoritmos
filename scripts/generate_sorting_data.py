@@ -1,7 +1,12 @@
 """
-Genera una sola vez el archivo de datos para el punto 1 (ordenamiento).
-1_000_000 enteros aleatorios de exactamente 8 dígitos (10_000_000–99_999_999).
-Si el archivo ya existe, no lo regenera.
+Genera los tres archivos de datos para el benchmark de ordenamiento.
+  - sorting_10000.txt      → 10,000 enteros de 8 dígitos
+  - sorting_100000.txt     → 100,000 enteros de 8 dígitos
+  - sorting_1000000.txt    → 1,000,000 enteros de 8 dígitos
+
+Cada número es aleatorio entre 10_000_000 y 99_999_999 (exactamente 8 digitos).
+Si el archivo ya existe NO se regenera (mismos datos garantizados entre ejecuciones).
+SEED fija para reproducibilidad.
 """
 from __future__ import annotations
 
@@ -9,22 +14,46 @@ import random
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_PATH = ROOT / "data" / "sorting_1000000.txt"
-COUNT = 1_000_000
+DATA_DIR = ROOT / "data"
 SEED = 42
 
+# Tamaños requeridos por el taller
+SIZES = {
+    10_000: "sorting_10000.txt",
+    100_000: "sorting_100000.txt",
+    1_000_000: "sorting_1000000.txt",
+}
 
-def main() -> None:
-    if DATA_PATH.exists():
-        print(f"Ya existe {DATA_PATH}, no se regenera.")
-        return
-    DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+def generate_all() -> None:
+    """Genera todos los archivos de datos necesarios."""
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
     rng = random.Random(SEED)
-    with DATA_PATH.open("w", encoding="ascii", newline="\n") as f:
-        for _ in range(COUNT):
-            f.write(str(rng.randint(10_000_000, 99_999_999)) + "\n")
-    print(f"Escritos {COUNT} valores en {DATA_PATH}")
+
+    # Generamos todos los números de una sola vez para mantener coherencia entre archivos
+    # El archivo de 1M contiene también los primeros 10k y 100k (mismos datos)
+    max_count = max(SIZES.keys())
+    all_numbers: list[int] = []
+
+    for size, filename in sorted(SIZES.items()):
+        path = DATA_DIR / filename
+        if path.exists():
+            print(f"  [OK] {filename} ya existe - no se regenera.")
+            continue
+
+        # Generamos solo lo que nos falta para llegar al tamaño requerido
+        needed = size - len(all_numbers)
+        if needed > 0:
+            all_numbers.extend(rng.randint(10_000_000, 99_999_999) for _ in range(needed))
+
+        print(f"  Generando {filename} ({size:,} elementos) ...", end=" ", flush=True)
+        with path.open("w", encoding="ascii", newline="\n") as f:
+            for n in all_numbers[:size]:
+                f.write(str(n) + "\n")
+        print("OK")
+
+    print("Datos listos en:", DATA_DIR)
 
 
 if __name__ == "__main__":
-    main()
+    generate_all()
